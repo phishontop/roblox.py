@@ -8,12 +8,13 @@ class Auth:
         self.headers = headers
         self.HTTPUser = HttpClient("users.roblox.com")
         self.HTTPAuth = HttpClient("auth.roblox.com")
+        self.HTTPPresence = HttpClient("presence.roblox.com")
 
     def set_token(self):
         response = self.HTTPAuth.post(
             resource="/v2/login",
             data={},
-            headers=self.headers
+            headers={"Cookie": self.headers["Cookie"]}
         )
         try:
             self.headers["X-CSRF-TOKEN"] = response[1].decode().split("x-csrf-token: ")[1].split("\r\n")[0]
@@ -33,5 +34,11 @@ class Auth:
 
         return json.loads(response_text)["id"]
 
+    def set_presence(self, presence):
+        response = self.HTTPPresence.post(
+            resource="/v1/presence/register-app-presence",
+            data=presence,
+            headers=self.headers
+        )
 
-
+        return json.loads(response[0].decode())
