@@ -1,14 +1,13 @@
-from .utilities.http import HttpClient
-import json
+
 
 class User:
 
     def __init__(self, data: dict) -> None:
-        self.id = data["id"]
+        for name, value in data.items():
+            setattr(self, name, value)
 
-
-    def __repr__(self):
-        return f"<{self.__class__.__name__} id={self.id}>"
+    def __repr__(self) -> str:
+        return f"<{self.__class__.__name__}>"
 
 
 

@@ -1,6 +1,9 @@
 import time
 from threading import Thread
 
+import json
+
+from .utilities.http import HttpClient
 from .auth import Auth
 from .user import User
 
@@ -20,9 +23,14 @@ class Client:
         auth_client = Auth(self.headers)
         auth_client.set_token()
         roblox_id = auth_client.get_authenticated_id()
-        self.user = User({"id": roblox_id})
-
+        
+        self.user = self.fetch_user(roblox_id=roblox_id)
         self.headers = auth_client.headers
+        
+    def fetch_user(self, roblox_id: int) -> User:
+        user_client = HttpClient("users.roblox.com")
+        response = user_client.get(f"/v1/users/{roblox_id}")
+        return User(json.loads(response[0].decode()))
 
     def run_event(self, event, requirement):
         event_thread = Thread(target=event)

@@ -5,10 +5,9 @@ client = roblox.Client()
 
 @client.event
 def on_ready():
-    print(f"Client started")
-    #print(client.user.id)
+    print(f"Logged in as {client.user.name}")
 
 client.run(
-    cookie="cookie here"
+    cookie="cookie_here"
 )
 
