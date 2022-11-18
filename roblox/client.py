@@ -4,7 +4,7 @@ import json
 from threading import Thread
 from .utilities.http import HttpClient
 from .auth import Auth
-from .user import User
+from .user import User, EventUser
 
 
 class Client:
@@ -12,7 +12,6 @@ class Client:
     def __init__(self) -> None:
         self.events = []
         self.headers = {}
-        self.requirements = {"on_ready": self.client_ready}
         self.running = False
         self.user = None
         self.auth_client = None
@@ -56,9 +55,16 @@ class Client:
         self.auth_client.set_token()
 
     def start(self):
-        # Start events
+        # Define requirements needed to trigger the events.
+
+        event_requirements = {
+            "on_ready": self.client_ready,
+            "on_follower": EventUser(self.user).on_follower
+        }
+
+        # Start events.
         for event in self.events:
-            requirement = self.requirements[event.__name__]
+            requirement = event_requirements[event.__name__]
             event_thread = Thread(target=self.run_event, args=(event, requirement))
             event_thread.start()
 
@@ -68,10 +74,10 @@ class Client:
             time.sleep(60)
 
     def event(self, target):
-        if callable(target) and target.__name__ in self.requirements:
+        if callable(target):
             self.events.append(target)
         else:
-            raise Exception(f"Event {target.__name__} is not found.")
+            raise Exception(f"Event is not callable")
 
     def run(self, cookie: str) -> None:
         try:
