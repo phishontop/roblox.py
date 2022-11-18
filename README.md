@@ -10,5 +10,10 @@
 - proxy support
 - docs and examples
 
+# Update log Nov 18th
+- New user inheritence object
+- New event
+- migrated event requirements to a non self value
+
 # Feedback
 - if you have any feedback leave a issue!
