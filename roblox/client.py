@@ -31,21 +31,23 @@ class Client:
         response = user_client.get(f"/v1/users/{roblox_id}")
         return User(json.loads(response[0].decode()))
 
-    def run_event(self, event, requirement):
-        event_thread = Thread(target=event)
+    def run_event(self, event, requirement) -> None:
         while True:
             requirement_value = requirement()
-            event_thread.start()
             if requirement_value == "break":
+                Thread(target=event).start()
                 break
 
-    def client_ready(self):
+            else:
+                Thread(target=event, args=(requirement_value,)).start()
+
+    def client_ready(self) -> str:
         while True:
             if self.running:
                 return "break"
             time.sleep(0.01)
 
-    def set_activity(self, location: str):
+    def set_activity(self, location: str) -> None:
         try:
             response = self.auth_client.set_presence({"location": location})
         except ssl.SSLEOFError:
@@ -54,7 +56,7 @@ class Client:
 
         self.auth_client.set_token()
 
-    def start(self):
+    def start(self) -> None:
         # Define requirements needed to trigger the events.
 
         event_requirements = {
@@ -73,7 +75,7 @@ class Client:
             self.set_activity(location="Profile")
             time.sleep(60)
 
-    def event(self, target):
+    def event(self, target) -> None:
         if callable(target):
             self.events.append(target)
         else:

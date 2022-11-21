@@ -6,13 +6,12 @@ client = roblox.Client()
 @client.event
 def on_ready():
     print(f"Logged in as {client.user.name}")
-    print(f"Client User has {client.user.get_friend_count()} friends")
 
 @client.event
-def on_follower():
-    print(f"{client.user.name} got a new follower")
+def on_follower(user):
+    print(f"{user.name} followed client user")
 
 client.run(
-    cookie=""
+    cookie="cookie_here"
 )
 

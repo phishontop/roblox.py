@@ -18,6 +18,21 @@ class BaseUser:
         response = self.friends_client.get(f"/v1/users/{self.roblox_id}/followers/count")
         return json.loads(response[0].decode())["count"]
 
+    def get_followers(self, limit: int, max_page: int = 1) -> list:
+        followers = []
+        cursor = ""
+        for page in range(max_page):
+            response = self.friends_client.get(f"/v1/users/{self.roblox_id}/followers?sortOrder=Desc&limit={limit}&cursor={cursor}")
+            response_json = json.loads(response[0].decode())
+            cursor = response_json["nextPageCursor"]
+
+            for follower in response_json["data"]:
+                followers.append(User(follower))
+
+            if cursor is None:
+                break
+
+        return followers
 
 class User(BaseUser):
 
@@ -38,12 +53,24 @@ class EventUser:
         self.base = BaseUser(roblox_id=user.id)
 
     def on_follower(self):
-        before = self.base.get_follower_count()
+        count = self.base.get_follower_count()
         while True:
             time.sleep(5)
-            after = self.base.get_follower_count()
-            if after > before:
-                return True
+            new_count = self.base.get_follower_count()
+            if new_count > count:
+                return self.base.get_followers(limit=10, max_page=1)[0]
+            elif new_count < count:
+                count = new_count
+
+
+
+
+
+
+
+
+
+
 
 
 
