@@ -65,10 +65,15 @@ class Client:
         }
 
         # Start events.
+        threads = []
         for event in self.events:
             requirement = event_requirements[event.__name__]
             event_thread = Thread(target=self.run_event, args=(event, requirement))
-            event_thread.start()
+            threads.append(event_thread)
+            
+        for thread in threads:
+            thread.daemon = True
+            thread.start()
 
         self.running = True
         while True:
