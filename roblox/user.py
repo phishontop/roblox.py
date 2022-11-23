@@ -34,6 +34,7 @@ class BaseUser:
 
         return followers
 
+
 class User(BaseUser):
 
     def __init__(self, data: dict) -> None:
@@ -61,18 +62,3 @@ class EventUser:
                 return self.base.get_followers(limit=10, max_page=1)[0]
             elif new_count < count:
                 count = new_count
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -11,21 +11,19 @@ class Client:
 
     def __init__(self) -> None:
         self.events = []
-        self.headers = {}
+        self.cookie = None
         self.running = False
         self.user = None
         self.auth_client = None
 
     def login(self, cookie: str) -> None:
-        self.headers["Cookie"] = f".ROBLOSECURITY={cookie}"
+        self.cookie = f".ROBLOSECURITY={cookie}"
 
-        self.auth_client = Auth(self.headers)
-        self.auth_client.set_token()
+        self.auth_client = Auth(cookie=self.cookie)
         roblox_id = self.auth_client.get_authenticated_id()
-        
+
         self.user = self.fetch_user(roblox_id=roblox_id)
-        self.headers = self.auth_client.headers
-        
+
     def fetch_user(self, roblox_id: int) -> User:
         user_client = HttpClient("users.roblox.com")
         response = user_client.get(f"/v1/users/{roblox_id}")
@@ -49,12 +47,11 @@ class Client:
 
     def set_activity(self, location: str) -> None:
         try:
-            response = self.auth_client.set_presence({"location": location})
+            self.auth_client.set_presence({"location": location})
         except ssl.SSLEOFError:
-            self.auth_client = Auth(self.headers)
-            response = self.auth_client.set_presence({"location": location})
+            self.auth_client = Auth(cookie=self.cookie)
+            self.auth_client.set_presence({"location": location})
 
-        self.auth_client.set_token()
 
     def start(self) -> None:
         # Define requirements needed to trigger the events.
@@ -70,7 +67,7 @@ class Client:
             requirement = event_requirements[event.__name__]
             event_thread = Thread(target=self.run_event, args=(event, requirement))
             threads.append(event_thread)
-            
+
         for thread in threads:
             thread.daemon = True
             thread.start()
