@@ -1,8 +1,9 @@
+from ..managers.UserManager import UserManager
 
-
-class UserModel:
+class UserModel(UserManager):
 
     def __init__(self, data: dict) -> None:
+        super().__init__(roblox_id=data["id"])
         self.name = data["name"]
         self.display_name = data["displayName"]
         self.id = data["id"]
