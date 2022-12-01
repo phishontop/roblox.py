@@ -1,5 +1,6 @@
 from ..managers.UserManager import UserManager
 
+
 class UserModel(UserManager):
 
     def __init__(self, data: dict) -> None:

@@ -1,11 +1,13 @@
 from ..services import UserService
-
+from ..services import GroupService
 
 class Client:
     
     def __init__(self) -> None:
-        print(f"Client object has been created")
+        pass
         
     def fetch_user(self, roblox_id: int):
-        print(f"Client fetching {roblox_id}")
         return UserService.fetch_user(roblox_id=roblox_id)
+    
+    def fetch_group(self, group_id: int):
+        return GroupService.fetch_group(group_id=group_id)

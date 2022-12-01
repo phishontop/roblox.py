@@ -8,7 +8,6 @@ class UserFactory:
     """
     @staticmethod
     def create(response):
-        print(response.json(), response.status_code)
         if response.status_code == 404:
             raise InvalidUser("User ID is invalid")
         

@@ -1,13 +1,9 @@
 import roblox
+import threading
 
 client = roblox.Client()
-for i in range(2000):
-    try:
-        user = client.fetch_user(i+1)
-        print(user.name)
-        
-    except roblox.models.ErrorModel.InvalidUser:
-        print(f"{i+1} ID is not found")
-        
-    except roblox.models.ErrorModel.RateLimit:
-        print(f"Ratelimited")
+
+user = client.fetch_user(1)
+print(user.name)
+group = client.fetch_group(1)
+print(group.name)

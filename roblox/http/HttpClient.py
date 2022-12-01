@@ -49,7 +49,6 @@ class Request:
         raise Exception(f"URL must start with http or https not {self.protocol}")
 
     def new_connection(self):
-        print(f"HttpClient started new connection {self.host}")
         sock = socket.socket()
         sock.connect((self.host, self.port))
 
@@ -63,7 +62,7 @@ class Request:
 
         return sock
 
-    def get_payload(self):
+    def get_payload(self) -> str:
         payload_header = ""
         for header_type, header_value in self.headers.items():
             payload_header += f"{header_type}: {header_value}\r\n"
@@ -75,7 +74,7 @@ class Request:
             content_length = len(json.dumps(self.data))
             return f"{self.method} {self.path} HTTP/1.1\r\nHost: {self.host}\r\n{payload_header}Content-Length: {content_length}\r\nContent-Type: application/json\r\n\r\n{self.data}".encode()
 
-    def get_response(self):
+    def get_response(self) -> Response:
         data = self.get_payload()
         if self.sock is None:
             self.sock = self.new_connection()
